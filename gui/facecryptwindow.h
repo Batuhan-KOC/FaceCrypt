@@ -13,6 +13,10 @@
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 
+#include <QPaintEvent>
+#include <QPen>
+#include <QBrush>
+
 #include "opencv2/opencv.hpp"
 #include "opencv2/opencv_modules.hpp"
 
@@ -65,6 +69,19 @@ private:
 
 public slots:
     void frameRateTimeout();
+};
+
+class MaskOverlay : public QWidget
+{
+    Q_OBJECT
+public:
+    MaskOverlay(QWidget* parent = nullptr);
+    ~MaskOverlay() = default;
+
+protected:
+    void paintEvent(QPaintEvent* event) override;
+
+    QPen overlayBorderPen;
 };
 
 #endif // FACECRYPTWINDOW_H

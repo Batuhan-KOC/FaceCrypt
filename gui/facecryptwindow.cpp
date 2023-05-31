@@ -2,11 +2,19 @@
 #include "facecryptwindow.h"
 #include "ui_facecryptwindow.h"
 
+#include <QRegion>
+
+#include <QPainter>
+
 FaceCryptWindow::FaceCryptWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::FaceCryptWindow)
 {
     ui->setupUi(this);
+
+    ui->maskOutline = new MaskOverlay(ui->centralwidget);
+    ui->maskOutline->setObjectName(QString::fromUtf8("maskOutline"));
+    ui->maskOutline->setGeometry(QRect(20, 20, 291, 191));
 
     scene = new QGraphicsScene();
 
@@ -17,6 +25,10 @@ FaceCryptWindow::FaceCryptWindow(QWidget *parent)
     ui->camView->setScene(scene);
 
     ui->camView->setFrameStyle(QFrame::NoFrame);
+
+    QRegion viewMask((ui->camView->width() - ui->camView->height()) / 2, 0, ui->camView->height(), ui->camView->height(), QRegion::Ellipse);
+
+    ui->camView->setMask(viewMask);
 
     connect(&frameRateTimer, &QTimer::timeout, this, &FaceCryptWindow::frameRateTimeout);
 
@@ -116,3 +128,26 @@ void FaceCryptWindow::frameRateTimeout()
 }
 
 
+
+MaskOverlay::MaskOverlay(QWidget* parent) : QWidget(parent)
+{
+    overlayBorderPen.setColor(QColor(47,47,47,255));
+
+    overlayBorderPen.setWidth(6);
+}
+
+void MaskOverlay::paintEvent(QPaintEvent *event)
+{
+    QPainter painter(this);
+
+    int w = this->width();
+    int h = this->height();
+
+    QRect overlayRect((w-h)/2, 0, h, h);
+
+    painter.setPen(overlayBorderPen);
+
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    painter.drawEllipse(overlayRect);
+}
