@@ -20,13 +20,17 @@ FaceCryptWindow::FaceCryptWindow(QWidget *parent)
 
     InitializeVideoView();
 
-    AddDropShadows();
+    InitializeCameraReader();
 
-    connect(&frameRateTimer, &QTimer::timeout, this, &FaceCryptWindow::frameRateTimeout);
+    AddDropShadows();
 
     UpdateAvailableCameras();
 
+    SetInvalidCameraSettingsWarning(true);
+
     SetDefaultCamera();
+
+    connect(ui->availableCameras, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FaceCryptWindow::SourceChangeRequested);
 }
 
 FaceCryptWindow::~FaceCryptWindow()
@@ -57,35 +61,8 @@ void FaceCryptWindow::UpdateAvailableCameras()
 
 void FaceCryptWindow::SetDefaultCamera()
 {
-    bool cameraSet{false};
-    int cameraIndex{0};
-
     if(ui->availableCameras->count() > 0){
-        for(int index = 0; index < ui->availableCameras->count() ; index++){
-            capture = new cv::VideoCapture(cameraIndex);
-
-            if(!capture->isOpened()){
-                continue;
-            }
-            else{
-                cameraSet = true;
-
-                frameRate = capture->get(cv::CAP_PROP_FPS);
-
-                frameRateTimer.setInterval(static_cast<int>(static_cast<double>(ONE_SECOND_TO_MILLISECONDS) / frameRate));
-
-                frameRateTimer.start();
-
-                break;
-            }
-        }
-    }
-
-    if(!cameraSet){
-        SetInvalidCameraSettingsWarning(true);
-    }
-    else{
-
+        emit SourceChanged(0);
     }
 }
 
@@ -134,25 +111,46 @@ void FaceCryptWindow::InitializeVideoView()
     ui->camView->setMask(viewMask);
 }
 
-void FaceCryptWindow::frameRateTimeout()
+void FaceCryptWindow::InitializeCameraReader()
 {
-    cv::Mat frame;
+    camReader = new CamReader();
 
-    bool success = capture->read(frame);
+    connect(camReader, &CamReader::FrameUpdated, this, &FaceCryptWindow::FrameUpdated, Qt::QueuedConnection);
+    connect(camReader, &CamReader::SourceInvalid, this, &FaceCryptWindow::SourceInvalid, Qt::QueuedConnection);
+    connect(camReader, &CamReader::SourceValid, this, &FaceCryptWindow::SourceValid, Qt::QueuedConnection);
+    connect(this, &FaceCryptWindow::SourceChanged, camReader, &CamReader::SourceChanged, Qt::QueuedConnection);
 
-    if(success){
-        static QImage imgIn;
-        imgIn = QImage((uchar*) frame.data, frame.cols, frame.rows, frame.step, QImage::Format_BGR888);
+    camReader->start();
+}
 
-        static QPixmap pixIn;
-        pixIn.convertFromImage(imgIn);
+void FaceCryptWindow::FrameUpdated()
+{
+    static QPixmap _pixmap;
 
-        pixmap->setPixmap(pixIn);
+    CamReader::frameLock.lock();
+    _pixmap = *CamReader::capturedPixmap;
+    CamReader::frameLock.unlock();
 
-        ui->camView->fitInView(pixmap, Qt::KeepAspectRatio);
+    pixmap->setPixmap(_pixmap);
 
-        ui->camView->update();
-    }
+    ui->camView->fitInView(pixmap, Qt::KeepAspectRatio);
+
+    ui->camView->update();
+}
+
+void FaceCryptWindow::SourceInvalid()
+{
+
+}
+
+void FaceCryptWindow::SourceValid()
+{
+
+}
+
+void FaceCryptWindow::SourceChangeRequested(int index)
+{
+    emit SourceChanged(index);
 }
 
 MaskOverlay::MaskOverlay(int length, QWidget* parent) : length(length), QWidget(parent)

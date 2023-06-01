@@ -17,14 +17,11 @@
 #include <QPen>
 #include <QBrush>
 
-#include "opencv2/opencv.hpp"
-#include "opencv2/opencv_modules.hpp"
+#include "camReader/camReader.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class FaceCryptWindow; }
 QT_END_NAMESPACE
-
-#define ONE_SECOND_TO_MILLISECONDS 1000.0
 
 class FaceCryptWindow : public QMainWindow
 {
@@ -40,20 +37,14 @@ private:
     // Camera info and description provided by Qt
     QCameraInfo currentCameraInfo;
 
-    // Active camera video capture object provided by Open cv
-    cv::VideoCapture* capture;
-
-    // Current camera frame rate
-    double frameRate;
-
-    // Timer to read frames from the capture object provided by Open cv
-    QTimer frameRateTimer;
-
     // Graphics Scene to display camera display
     QGraphicsScene* scene;
 
     // Cam pixmap image
     QGraphicsPixmapItem* pixmap;
+
+    // Camera reader thread
+    CamReader* camReader;
 
     // Return the available and connectable cameras attached on the current pc.
     QStringList GetAvailableCameras();
@@ -76,8 +67,24 @@ private:
     // Initialize graphics scene and view
     void InitializeVideoView();
 
-public slots:
-    void frameRateTimeout();
+    // Initialize camera reader thread
+    void InitializeCameraReader();
+
+signals:
+    void SourceChanged(int index);
+
+private slots:
+    // Cam reader sended a new frame
+    void FrameUpdated();
+
+    // New source is not valid
+    void SourceInvalid();
+
+    // New source is valid
+    void SourceValid();
+
+    // User chosen a new video source
+    void SourceChangeRequested(int index);
 };
 
 class MaskOverlay : public QWidget
