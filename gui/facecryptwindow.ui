@@ -17,7 +17,8 @@
    <property name="styleSheet">
     <string notr="true">QWidget#centralwidget 
 {
-background-color: rgb(47, 47, 47);
+background-image: url(:/backgroundpattern.jpg);
+background-repeat: repeat-xy;
 }</string>
    </property>
    <widget class="QComboBox" name="availableCameras">
@@ -59,28 +60,6 @@ background-color: rgb(47, 47, 47);
      </rect>
     </property>
    </widget>
-   <widget class="QWidget" name="borderLine" native="true">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>311</width>
-      <height>531</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <stylestrategy>PreferAntialias</stylestrategy>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">border : 2px solid white; border-radius : 10px;</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="cameraLabel">
     <property name="geometry">
      <rect>
@@ -106,11 +85,6 @@ background-color: rgb(47, 47, 47);
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <zorder>borderLine</zorder>
-   <zorder>availableCameras</zorder>
-   <zorder>camView</zorder>
-   <zorder>maskOutline</zorder>
-   <zorder>cameraLabel</zorder>
   </widget>
  </widget>
  <resources/>

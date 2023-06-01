@@ -13,10 +13,12 @@ OPENCV_INSTALLATION_PATH=C:/libs/OPENCV/Installation
 message($$OPENCV_INSTALLATION_PATH)
 
 SOURCES += \
+    camReader/camReader.cpp \
     main.cpp \
     facecryptwindow.cpp
 
 HEADERS += \
+    camReader/camReader.h \
     facecryptwindow.h
 
 FORMS += \
@@ -63,3 +65,6 @@ CONFIG(release, debug|release) {
     PRE_TARGETDEPS += $$OPENCV_INSTALLATION_PATH/x64/vc16/lib/opencv_features2d470d.lib
 }
 }
+
+RESOURCES += \
+    resource/resource.qrc

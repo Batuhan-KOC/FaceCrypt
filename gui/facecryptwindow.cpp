@@ -6,29 +6,21 @@
 
 #include <QPainter>
 
+#include <QGraphicsDropShadowEffect>
+
+// rgb(1,160,182)
+
 FaceCryptWindow::FaceCryptWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::FaceCryptWindow)
 {
     ui->setupUi(this);
 
-    ui->maskOutline = new MaskOverlay(ui->centralwidget);
-    ui->maskOutline->setObjectName(QString::fromUtf8("maskOutline"));
-    ui->maskOutline->setGeometry(QRect(20, 20, 291, 191));
+    InitializeMaskOutline();
 
-    scene = new QGraphicsScene();
+    InitializeVideoView();
 
-    pixmap = new QGraphicsPixmapItem();
-
-    scene->addItem(pixmap);
-
-    ui->camView->setScene(scene);
-
-    ui->camView->setFrameStyle(QFrame::NoFrame);
-
-    QRegion viewMask((ui->camView->width() - ui->camView->height()) / 2, 0, ui->camView->height(), ui->camView->height(), QRegion::Ellipse);
-
-    ui->camView->setMask(viewMask);
+    AddDropShadows();
 
     connect(&frameRateTimer, &QTimer::timeout, this, &FaceCryptWindow::frameRateTimeout);
 
@@ -102,6 +94,46 @@ void FaceCryptWindow::SetInvalidCameraSettingsWarning(bool val)
 
 }
 
+void FaceCryptWindow::AddDropShadows()
+{
+    QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
+    QGraphicsDropShadowEffect *effect2 = new QGraphicsDropShadowEffect;
+    effect->setBlurRadius(5);
+    effect->setXOffset(-4);
+    effect->setYOffset(4);
+    effect->setColor(Qt::black);
+    effect2->setBlurRadius(5);
+    effect2->setXOffset(-4);
+    effect2->setYOffset(4);
+    effect2->setColor(Qt::black);
+    ui->availableCameras->setGraphicsEffect(effect);
+    ui->maskOutline->setGraphicsEffect(effect2);
+}
+
+void FaceCryptWindow::InitializeMaskOutline()
+{
+    ui->maskOutline = new MaskOverlay(ui->camView->height(), ui->centralwidget);
+    ui->maskOutline->setObjectName(QString::fromUtf8("maskOutline"));
+    ui->maskOutline->setGeometry(QRect(ui->camView->x(), ui->camView->y() - 5, ui->camView->width(), ui->camView->height() + 10));
+}
+
+void FaceCryptWindow::InitializeVideoView()
+{
+    scene = new QGraphicsScene();
+
+    pixmap = new QGraphicsPixmapItem();
+
+    scene->addItem(pixmap);
+
+    ui->camView->setScene(scene);
+
+    ui->camView->setFrameStyle(QFrame::NoFrame);
+
+    QRegion viewMask((ui->camView->width() - ui->camView->height()) / 2, 0, ui->camView->height(), ui->camView->height(), QRegion::Ellipse);
+
+    ui->camView->setMask(viewMask);
+}
+
 void FaceCryptWindow::frameRateTimeout()
 {
     cv::Mat frame;
@@ -115,10 +147,6 @@ void FaceCryptWindow::frameRateTimeout()
         static QPixmap pixIn;
         pixIn.convertFromImage(imgIn);
 
-        bool ress = pixIn.save("ananke.jpg", "JPG");
-
-        qDebug() << ress << "   " << pixIn.width() << " " << pixIn.height();
-
         pixmap->setPixmap(pixIn);
 
         ui->camView->fitInView(pixmap, Qt::KeepAspectRatio);
@@ -127,11 +155,9 @@ void FaceCryptWindow::frameRateTimeout()
     }
 }
 
-
-
-MaskOverlay::MaskOverlay(QWidget* parent) : QWidget(parent)
+MaskOverlay::MaskOverlay(int length, QWidget* parent) : length(length), QWidget(parent)
 {
-    overlayBorderPen.setColor(QColor(47,47,47,255));
+    overlayBorderPen.setColor(Qt::white);
 
     overlayBorderPen.setWidth(6);
 }
@@ -143,7 +169,10 @@ void MaskOverlay::paintEvent(QPaintEvent *event)
     int w = this->width();
     int h = this->height();
 
-    QRect overlayRect((w-h)/2, 0, h, h);
+    QRect overlayRect;
+    overlayRect.setWidth(length);
+    overlayRect.setHeight(length);
+    overlayRect.moveCenter(QPoint(w/2, h/2));
 
     painter.setPen(overlayBorderPen);
 

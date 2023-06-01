@@ -67,6 +67,15 @@ private:
     // Set invalid camera message visible
     void SetInvalidCameraSettingsWarning(bool val);
 
+    // Add drop shadows to objects at construction
+    void AddDropShadows();
+
+    // Initialize video view mask outline
+    void InitializeMaskOutline();
+
+    // Initialize graphics scene and view
+    void InitializeVideoView();
+
 public slots:
     void frameRateTimeout();
 };
@@ -75,13 +84,14 @@ class MaskOverlay : public QWidget
 {
     Q_OBJECT
 public:
-    MaskOverlay(QWidget* parent = nullptr);
+    MaskOverlay(int length, QWidget* parent = nullptr);
     ~MaskOverlay() = default;
 
 protected:
     void paintEvent(QPaintEvent* event) override;
 
     QPen overlayBorderPen;
+    int length;
 };
 
 #endif // FACECRYPTWINDOW_H
