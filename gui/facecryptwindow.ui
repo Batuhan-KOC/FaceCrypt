@@ -36,6 +36,19 @@ background-repeat: repeat-xy;
       <pointsize>9</pointsize>
      </font>
     </property>
+    <property name="styleSheet">
+     <string notr="true">QComboBox{
+border : 2px solid rgb(47, 47, 47);
+border-radius : 5px;
+}
+
+QComboBox:editable {
+	border : 0px solid white;
+	border-radius : 6px;
+    background: rgb(47, 47, 47);
+	color: white;
+}</string>
+    </property>
    </widget>
    <widget class="QGraphicsView" name="camView">
     <property name="geometry">
@@ -83,6 +96,191 @@ background-repeat: repeat-xy;
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="selectFileButton">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>320</y>
+      <width>291</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Pixeloid Sans</family>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+border : 2px solid rgb(47, 47, 47);
+border-radius : 5px;
+background-color : white;
+}
+
+QPushButton:pressed{
+background-color:  #f0f0f0;
+}
+
+QPushButton:!enabled{
+background-color: #f7f7f7;
+border-color : #e3e3e3;
+color : #696969;
+}</string>
+    </property>
+    <property name="text">
+     <string>Select File</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="selectedFile">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>280</y>
+      <width>291</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Pixeloid Sans</family>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border : 2px solid rgb(47, 47, 47);
+border-radius : 5px;</string>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="password">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>400</y>
+      <width>291</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Pixeloid Sans</family>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLineEdit{
+border : 2px solid rgb(47, 47, 47);
+border-radius : 5px;
+background-color : white;
+}
+
+QLineEdit:!enabled{
+background-color: #f7f7f7;
+border-color : #e3e3e3;
+color : #696969;
+}</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="enablePasswordButton">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>360</y>
+      <width>291</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Pixeloid Sans</family>
+     </font>
+    </property>
+    <property name="text">
+     <string>Enable password</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="generatePasswordButton">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>440</y>
+      <width>291</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Pixeloid Sans</family>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+border : 2px solid rgb(47, 47, 47);
+border-radius : 5px;
+background-color : white;
+}
+
+QPushButton:pressed{
+background-color:  #f0f0f0;
+}
+
+QPushButton:!enabled{
+background-color: #f7f7f7;
+border-color : #e3e3e3;
+color : #696969;
+}</string>
+    </property>
+    <property name="text">
+     <string>Generate Password</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="encryptButton">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>480</y>
+      <width>291</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Pixeloid Sans</family>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+border : 2px solid rgb(47, 47, 47);
+border-radius : 5px;
+background-color : white;
+}
+
+QPushButton:pressed{
+background-color:  #f0f0f0;
+}
+
+QPushButton:!enabled{
+background-color: #f7f7f7;
+border-color : #e3e3e3;
+color : #696969;
+}</string>
+    </property>
+    <property name="text">
+     <string>ENCRYPT</string>
     </property>
    </widget>
   </widget>
