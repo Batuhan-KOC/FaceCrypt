@@ -40,13 +40,14 @@ background-repeat: repeat-xy;
      <string notr="true">QComboBox{
 border : 2px solid rgb(47, 47, 47);
 border-radius : 5px;
+color: black;
 }
 
 QComboBox:editable {
 	border : 0px solid white;
 	border-radius : 6px;
     background: rgb(47, 47, 47);
-	color: white;
+	color: black;
 }</string>
     </property>
    </widget>
@@ -123,7 +124,7 @@ background-color : white;
 }
 
 QPushButton:pressed{
-background-color:  #f0f0f0;
+background-color:  #c0c0c0;
 }
 
 QPushButton:!enabled{
@@ -152,7 +153,8 @@ color : #696969;
     </property>
     <property name="styleSheet">
      <string notr="true">border : 2px solid rgb(47, 47, 47);
-border-radius : 5px;</string>
+border-radius : 5px;
+color:black;</string>
     </property>
     <property name="readOnly">
      <bool>true</bool>
@@ -180,6 +182,7 @@ border-radius : 5px;</string>
 border : 2px solid rgb(47, 47, 47);
 border-radius : 5px;
 background-color : white;
+color: black;
 }
 
 QLineEdit:!enabled{
@@ -190,6 +193,9 @@ color : #696969;
     </property>
    </widget>
    <widget class="QCheckBox" name="enablePasswordButton">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -232,7 +238,7 @@ background-color : white;
 }
 
 QPushButton:pressed{
-background-color:  #f0f0f0;
+background-color:  #c0c0c0;
 }
 
 QPushButton:!enabled{
@@ -270,7 +276,7 @@ background-color : white;
 }
 
 QPushButton:pressed{
-background-color:  #f0f0f0;
+background-color:  #c0c0c0;
 }
 
 QPushButton:!enabled{

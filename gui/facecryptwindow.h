@@ -7,17 +7,20 @@
 #include <QTimer>
 
 #include <QStringList>
+#include <QList>
 
 #include <QCameraInfo>
 
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
+#include <QGraphicsDropShadowEffect>
 
 #include <QPaintEvent>
 #include <QPen>
 #include <QBrush>
 
 #include "camReader/camReader.h"
+#include "fileDialog/fileDialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class FaceCryptWindow; }
@@ -45,6 +48,9 @@ private:
 
     // Camera reader thread
     CamReader* camReader;
+
+    // Graphic effects on ui elements
+    QList<QGraphicsEffect*> effects;
 
     // Return the available and connectable cameras attached on the current pc.
     QStringList GetAvailableCameras();
@@ -85,6 +91,21 @@ private slots:
 
     // User chosen a new video source
     void SourceChangeRequested(int index);
+
+    // Select file button press handler
+    void SelectFileButtonPressed();
+
+    // Selected file line edit text changes handler
+    void SelectedFileTextChanged(QString file);
+
+    // Enable password ui button check box state change handler
+    void EnablePasswordCheckboxStateChanged(int state);
+
+    // Generate password button press handler
+    void GeneratePasswordButtonPressed();
+
+    // Generate and return a random password to encrypt file/folder
+    QString GenerateRandomPassword();
 };
 
 class MaskOverlay : public QWidget

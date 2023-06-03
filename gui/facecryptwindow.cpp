@@ -6,10 +6,6 @@
 
 #include <QPainter>
 
-#include <QGraphicsDropShadowEffect>
-
-// rgb(1,160,182)
-
 FaceCryptWindow::FaceCryptWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::FaceCryptWindow)
@@ -31,6 +27,14 @@ FaceCryptWindow::FaceCryptWindow(QWidget *parent)
     SetDefaultCamera();
 
     connect(ui->availableCameras, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FaceCryptWindow::SourceChangeRequested);
+
+    connect(ui->selectFileButton, &QPushButton::pressed, this, &FaceCryptWindow::SelectFileButtonPressed);
+
+    connect(ui->selectedFile, &QLineEdit::textChanged, this, &FaceCryptWindow::SelectedFileTextChanged);
+
+    connect(ui->enablePasswordButton, &QCheckBox::stateChanged, this, &FaceCryptWindow::EnablePasswordCheckboxStateChanged);
+
+    connect(ui->generatePasswordButton, &QPushButton::pressed, this, &FaceCryptWindow::GeneratePasswordButtonPressed);
 }
 
 FaceCryptWindow::~FaceCryptWindow()
@@ -73,18 +77,22 @@ void FaceCryptWindow::SetInvalidCameraSettingsWarning(bool val)
 
 void FaceCryptWindow::AddDropShadows()
 {
-    QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
-    QGraphicsDropShadowEffect *effect2 = new QGraphicsDropShadowEffect;
-    effect->setBlurRadius(5);
-    effect->setXOffset(-4);
-    effect->setYOffset(4);
-    effect->setColor(Qt::black);
-    effect2->setBlurRadius(5);
-    effect2->setXOffset(-4);
-    effect2->setYOffset(4);
-    effect2->setColor(Qt::black);
-    ui->availableCameras->setGraphicsEffect(effect);
-    ui->maskOutline->setGraphicsEffect(effect2);
+    for(int index = 0 ; index < 7 ; index++){
+        effects.append(new QGraphicsDropShadowEffect);
+
+        static_cast<QGraphicsDropShadowEffect*>(effects.at(index))->setBlurRadius(5);
+        static_cast<QGraphicsDropShadowEffect*>(effects.at(index))->setXOffset(-4);
+        static_cast<QGraphicsDropShadowEffect*>(effects.at(index))->setYOffset(4);
+        static_cast<QGraphicsDropShadowEffect*>(effects.at(index))->setColor(Qt::darkGray);
+    }
+
+    ui->availableCameras->setGraphicsEffect(effects.at(0));
+    ui->maskOutline->setGraphicsEffect(effects.at(1));
+    ui->selectedFile->setGraphicsEffect(effects.at(2));
+    ui->selectFileButton->setGraphicsEffect(effects.at(3));
+    ui->password->setGraphicsEffect(effects.at(4));
+    ui->generatePasswordButton->setGraphicsEffect(effects.at(5));
+    ui->encryptButton->setGraphicsEffect(effects.at(6));
 }
 
 void FaceCryptWindow::InitializeMaskOutline()
@@ -151,6 +159,71 @@ void FaceCryptWindow::SourceValid()
 void FaceCryptWindow::SourceChangeRequested(int index)
 {
     emit SourceChanged(index);
+}
+
+void FaceCryptWindow::SelectFileButtonPressed()
+{
+    FileDialog dialog;
+
+    int success = dialog.exec();
+
+    if(success){
+        ui->selectedFile->setText(dialog.selectedFiles().front());
+        ui->encryptButton->setEnabled(true);
+    }
+    else{
+        ui->selectedFile->clear();
+        ui->encryptButton->setEnabled(false);
+    }
+}
+
+void FaceCryptWindow::SelectedFileTextChanged(QString file)
+{
+    if(file.isEmpty()){
+        ui->enablePasswordButton->setChecked(false);
+        ui->enablePasswordButton->setEnabled(false);
+        ui->generatePasswordButton->setEnabled(false);
+        ui->password->clear();
+        ui->password->setEnabled(false);
+        ui->encryptButton->setEnabled(false);
+    }
+    else{
+        ui->enablePasswordButton->setEnabled(true);
+    }
+}
+
+void FaceCryptWindow::EnablePasswordCheckboxStateChanged(int state)
+{
+    if(state == Qt::Unchecked){
+        ui->password->clear();
+        ui->password->setEnabled(false);
+        ui->generatePasswordButton->setEnabled(false);
+    }
+    else if(state == Qt::Checked){
+        ui->password->clear();
+        ui->password->setEnabled(true);
+        ui->generatePasswordButton->setEnabled(true);
+    }
+}
+
+void FaceCryptWindow::GeneratePasswordButtonPressed()
+{
+     ui->password->setText(GenerateRandomPassword());
+}
+
+QString FaceCryptWindow::GenerateRandomPassword()
+{
+    const QString possibleCharacters("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!'^+%&/()=?_#${[]}\|<>/*-");
+    const int randomStringLength = 100;
+
+    QString randomString;
+    for(int i=0; i<randomStringLength; ++i)
+    {
+        int index = qrand() % possibleCharacters.length();
+        QChar nextChar = possibleCharacters.at(index);
+        randomString.append(nextChar);
+    }
+    return randomString;
 }
 
 MaskOverlay::MaskOverlay(int length, QWidget* parent) : length(length), QWidget(parent)

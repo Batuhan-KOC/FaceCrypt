@@ -14,12 +14,14 @@ message($$OPENCV_INSTALLATION_PATH)
 
 SOURCES += \
     camReader/camReader.cpp \
+    fileDialog/fileDialog.cpp \
     main.cpp \
     facecryptwindow.cpp
 
 HEADERS += \
     camReader/camReader.h \
-    facecryptwindow.h
+    facecryptwindow.h \
+    fileDialog/fileDialog.h
 
 FORMS += \
     facecryptwindow.ui
