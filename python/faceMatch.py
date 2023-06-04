@@ -23,7 +23,7 @@ try:
             elif argument in ("-p", "--port"):
                 portNumber = value
 
-        if((len(im1Path) == 0 | im1Path == ' ') | (len(im2Path) == 0 | im2Path == ' ') | (len(portNumber) | portNumber == ' ') == 0):
+        if((len(im1Path) == 0) | (len(im2Path) == 0) | (len(portNumber)) == 0):
             # output error
             print ("Invalid argument list error")
         else :
@@ -44,6 +44,8 @@ try:
 
             print("Verifying images..")
             result = DeepFace.verify(img1_path = im1Path, img2_path = im2Path)
+
+            print(result)
             
     else :
         # output error
