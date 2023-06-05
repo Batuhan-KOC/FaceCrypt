@@ -40,10 +40,19 @@ try:
             UDP_PORT = int(portNumber)
 
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            sock.bind((UDP_IP, UDP_PORT))
 
             print("Verifying images..")
             result = DeepFace.verify(img1_path = im1Path, img2_path = im2Path)
+
+            data = ''
+            if result['verified']:
+                data = "VERIFIED"
+            else :
+                data = "NOT VERIFIED"
+
+            sock.sendto(bytes(data, encoding="utf-8"), (UDP_IP, UDP_PORT))
+
+            sock.close()
 
             print(result)
             
