@@ -1,4 +1,4 @@
-# FaceCrypt
+# FaceCrypt [In Development]
 
 FaceCrypt is a secure file encryption application that utilizes facial recognition technology to safeguard your sensitive files. With FaceCrypt, you can encrypt your files with just a few simple steps, adding an extra layer of protection to your confidential data.
 Features
